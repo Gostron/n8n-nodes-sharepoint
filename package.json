@@ -1,6 +1,6 @@
 {
-  "name": "n8n-nodes-<...>",
-  "version": "0.1.0",
+  "name": "n8n-nodes-sharepoint-app-only",
+  "version": "0.1.2",
   "description": "",
   "keywords": [
     "n8n-community-node-package"
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/Gostron/n8n-nodes-sharepoint.git"
   },
   "engines": {
     "node": ">=20.15"
@@ -22,6 +22,7 @@
   "scripts": {
     "build": "npx rimraf dist && tsc && gulp build:icons",
     "dev": "tsc --watch",
+    "t": "tsc && node dist/nodes/test.js",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",
@@ -33,15 +34,14 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/MicrosoftSharePointAppOnlyApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/GetWebPropertiesNode/GetWebPropertiesNode.node.js"
     ]
   },
   "devDependencies": {
+    "@types/node": "^22.15.29",
     "@typescript-eslint/parser": "~8.32.0",
     "eslint": "^8.57.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.3",
@@ -51,5 +51,13 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "@pnp/graph": "^4.13.0",
+    "@pnp/nodejs": "^4.13.0",
+    "@pnp/queryable": "^4.13.0",
+    "@pnp/sp": "^4.13.0",
+    "node-fetch": "^3.3.2",
+    "whatwg-url": "^14.2.0"
   }
 }
