@@ -1,15 +1,15 @@
 {
   "name": "n8n-nodes-sharepoint-app-only",
   "version": "0.1.2",
-  "description": "",
+  "description": "Nodes for n8n to interact with Microsoft SharePoint using App-Only authentication",
   "keywords": [
     "n8n-community-node-package"
   ],
   "license": "MIT",
   "homepage": "",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "ABNER Peter",
+    "email": "abner.peter@gmail.com"
   },
   "repository": {
     "type": "git",
