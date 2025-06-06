@@ -1,6 +1,6 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData, INodeType, INodeTypeDescription } from "n8n-workflow"
 import { NodeConnectionType, NodeOperationError } from "n8n-workflow"
-import { getPnp } from "../../libraries/pnp/pnp"
+import { getPnp, IPnpConfig } from "../../libraries/pnp/pnp"
 
 export class GetWebPropertiesNode implements INodeType {
   description: INodeTypeDescription = {
@@ -15,6 +15,12 @@ export class GetWebPropertiesNode implements INodeType {
     inputs: [NodeConnectionType.Main],
     outputs: [NodeConnectionType.Main],
     usableAsTool: true,
+    credentials: [
+      {
+        name: "microsoftSharePointAppOnlyApi",
+        required: true,
+      },
+    ],
     properties: [
       // Node properties which the user gets displayed and
       // can change on the node.
@@ -67,15 +73,25 @@ export class GetWebPropertiesNode implements INodeType {
     //     }
     //   }
     // }
+    const credentials = await this.getCredentials("microsoftSharePointAppOnlyApi")
+    const config: IPnpConfig = {
+      clientCertificatePrivateKey: (() => {
+        let value = (credentials.clientCertificatePrivateKey as string).replace(/\s+/g, "")
+        value = value.replace("-----BEGINRSAPRIVATEKEY-----", "").replace("-----ENDRSAPRIVATEKEY-----", "")
+        // Split value in lines of 64 characters
+        value = value.match(/.{1,64}/g)?.join("\n") || ""
+        // Add the header and footer
+        value = `-----BEGIN RSA PRIVATE KEY-----\n${value}\n-----END RSA PRIVATE KEY-----`
+        return value
+      })(),
+      clientCertificateThumbprint: credentials.clientCertificateThumbprint as string,
+      clientId: credentials.clientId as string,
+      tenantId: credentials.tenantId as string,
+      siteUrl: credentials.siteUrl as string,
+    }
 
     try {
-      const { sp } = await getPnp({
-        clientCertificatePrivateKey: "<you-credential-private-key>",
-        clientCertificateThumbprint: "<your-credential-thumbprint>",
-        clientId: "<your-credential-client-id>",
-        tenantId: "<your-tenant-id>",
-        siteUrl: "https://<your-tenant-name>.sharepoint.com/sites/<your-site-name>",
-      })
+      const { sp } = await getPnp(config)
       const web = await sp.web()
 
       return [
@@ -89,17 +105,25 @@ export class GetWebPropertiesNode implements INodeType {
       // This node should never fail but we want to showcase how
       // to handle errors.
       if (this.continueOnFail()) {
-        items.push({ json: this.getInputData()[0].json, error })
+        items.push({
+          json: {
+            input: this.getInputData()[0].json,
+            config,
+          },
+          error,
+        })
       } else {
         // Adding `itemIndex` allows other workflows to handle this error
         if (error.context) {
           // If the error thrown already contains the context property,
           // only append the itemIndex
-          error.context.itemIndex = 0
+          // error.context.config = config
+          error.context.itemIndex = 1
           throw error
         }
         throw new NodeOperationError(this.getNode(), error, {
-          itemIndex: 0,
+          itemIndex: 1,
+          // description: JSON.stringify(config),
         })
       }
     }
