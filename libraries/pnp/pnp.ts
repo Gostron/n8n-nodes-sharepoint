@@ -1,5 +1,5 @@
-import { type SPFI } from "@pnp/sp/presets/all.js"
-import { type GraphFI } from "@pnp/graph/presets/all.js"
+import { type ISPQueryable, type SPFI } from "@pnp/sp/presets/all.js"
+import type { GraphFI } from "@pnp/graph/presets/all.js"
 
 const getESMPnP = () => {
   return Promise.all([
@@ -14,6 +14,13 @@ const getESMPnP = () => {
       SPDefault: nodejs.SPDefault,
       GraphDefault: nodejs.GraphDefault,
       InjectHeaders: queryable.InjectHeaders,
+      spQueryable: sp.SPQueryable,
+      spMethods: {
+        get: sp.spGet,
+        post: sp.spPost,
+        delete: sp.spDelete,
+        patch: sp.spPatch,
+      },
     }
   })
 }
@@ -36,7 +43,7 @@ export type IPnpConfig = IPnpConfigCertificate | IPnpConfigSecret
 type IPnpConfigInternal = IPnpConfigCommon & Partial<IPnpConfigSecret> & Partial<IPnpConfigCertificate>
 
 export const getPnp = async (config: IPnpConfig) => {
-  const { spfi, graphfi, SPDefault, GraphDefault, InjectHeaders } = await getESMPnP()
+  const { spfi, graphfi, SPDefault, GraphDefault, InjectHeaders, spMethods, spQueryable } = await getESMPnP()
 
   const NoOdata = (instance: any) => InjectHeaders({ Accept: "application/json;odata=nometadata" })(instance)
   const adaptiveAuth = (config: IPnpConfig, mode: "sp" | "graph") => {
@@ -82,6 +89,13 @@ export const getPnp = async (config: IPnpConfig) => {
     /** Returns a global SharePoint queryable object by authenticating using client ID / client Secret */
     sp: spfi(config.siteUrl).using(adaptiveAuth(config, "sp"), NoOdata) as SPFI,
     spOdata: spfi(config.siteUrl).using(adaptiveAuth(config, "sp")) as SPFI,
+    spMethods: spMethods as {
+      get: <T = any>(o: ISPQueryable<any>, init?: RequestInit) => Promise<T>
+      post: <T = any>(o: ISPQueryable<any>, init?: RequestInit) => Promise<T>
+      delete: <T = any>(o: ISPQueryable<any>, init?: RequestInit) => Promise<T>
+      patch: <T = any>(o: ISPQueryable<any>, init?: RequestInit) => Promise<T>
+    },
+    spQueryable: spQueryable,
 
     /** Returns a global Graph queryable object by authenticating using client ID / client Secret */
     graph: graphfi().using(adaptiveAuth(config, "graph")) as GraphFI,
