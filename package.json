@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-sharepoint-app-only",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Nodes for n8n to interact with Microsoft SharePoint using App-Only authentication",
   "keywords": [
     "n8n-community-node-package"
@@ -37,7 +37,9 @@
       "dist/credentials/MicrosoftSharePointAppOnlyApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/GetWebPropertiesNode/GetWebPropertiesNode.node.js"
+      "dist/nodes/GetWebPropertiesNode/GetWebPropertiesNode.node.js",
+      "dist/nodes/HttpRequestNode/HttpRequestNode.node.js",
+      "dist/nodes/CreateListItemNode/CreateListItemNode.node.js"
     ]
   },
   "devDependencies": {

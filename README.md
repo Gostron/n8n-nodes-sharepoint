@@ -1,5 +1,7 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
+[N8N location](C:\Users\pabner\.n8n\nodes) for command `npm link n8n-nodes-sharepoint-app-only`
+
 # n8n-nodes-starter
 
 This repo contains example nodes to help you get started building your own custom integrations for [n8n](https://n8n.io). It includes the node linter and other dependencies.
