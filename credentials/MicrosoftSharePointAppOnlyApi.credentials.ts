@@ -29,12 +29,6 @@ export class MicrosoftSharePointAppOnlyApi implements ICredentialType {
         "The private key of the client certificate used for authentication. It should be in PEM format. You can remove header, footer and line returns if needed.",
     },
     {
-      displayName: "Site URL",
-      name: "siteUrl",
-      type: "string",
-      default: "",
-    },
-    {
       displayName: "Client Certificate Thumbprint",
       name: "clientCertificateThumbprint",
       type: "string",
@@ -49,15 +43,6 @@ export class MicrosoftSharePointAppOnlyApi implements ICredentialType {
       placeholder: "e.g., 12345678-1234-1234-1234-123456789012",
       description:
         "The ID of the Microsoft 365 tenant. This is a GUID that uniquely identifies your tenant. You can find it on https://whatismytenantid.com or in the Azure portal.",
-    },
-    {
-      displayName: "Tenant name",
-      name: "tenantName",
-      type: "string",
-      default: "",
-      placeholder: "contoso",
-      description:
-        "The name of the tenant, used to construct the site URL (e.g., for a SharePoint URL https://contoso.sharepoint.com, this would be 'contoso').",
     },
   ]
 }

@@ -8,7 +8,7 @@ type PnpResult = Unpromisify<ReturnType<typeof getPnp>>
 
 export async function getSharePointConfig(
   context: IExecuteFunctions,
-  alternateSiteUrl?: string,
+  siteUrl: string,
 ): Promise<
   PnpResult & {
     config: IPnpConfig
@@ -26,8 +26,9 @@ export async function getSharePointConfig(
     clientCertificateThumbprint: credentials.clientCertificateThumbprint as string,
     clientId: credentials.clientId as string,
     tenantId: credentials.tenantId as string,
-    siteUrl: alternateSiteUrl || `https://${credentials.tenantName as string}-admin.sharepoint.com`,
+    siteUrl: siteUrl,
   }
+  console.log(config)
   return { config, ...(await getPnp(config)) }
 }
 

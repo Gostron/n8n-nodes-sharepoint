@@ -37,9 +37,7 @@
       "dist/credentials/MicrosoftSharePointAppOnlyApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/GetWebPropertiesNode/GetWebPropertiesNode.node.js",
-      "dist/nodes/HttpRequestNode/HttpRequestNode.node.js",
-      "dist/nodes/CreateListItemNode/CreateListItemNode.node.js"
+      "dist/nodes/HttpRequestNode/HttpRequestNode.node.js"
     ]
   },
   "devDependencies": {

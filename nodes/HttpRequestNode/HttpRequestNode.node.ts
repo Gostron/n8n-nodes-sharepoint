@@ -45,7 +45,7 @@ export class HttpRequestNode implements INodeType {
         required: true,
       },
       {
-        displayName: "Relative URL",
+        displayName: "Site Relative Endpoint URL",
         name: "relativeUrl",
         type: "string",
         default: "",
@@ -97,8 +97,8 @@ export class HttpRequestNode implements INodeType {
       const siteUrl = this.getNodeParameter("siteUrl", itemIndex, "") as string
       const method = this.getNodeParameter("method", itemIndex, "GET") as string
       const relativeUrl = this.getNodeParameter("relativeUrl", itemIndex, "") as string
-      const query = tryParse("query")
-      const headers = tryParse("headers")
+      const query = tryParse("query") || {}
+      const headers = tryParse("headers") || {}
       const body = tryParse("body")
 
       const queryString =
@@ -109,13 +109,9 @@ export class HttpRequestNode implements INodeType {
             .join("&")
         : ""
 
-      console.log({ query, queryString })
+      const { spOdata: sp, spMethods, spQueryable } = await getSharePointConfig(this, siteUrl)
 
       const fullUrl = `${siteUrl}${relativeUrl}${queryString}`
-      console.log(`Executing HTTP request to: ${fullUrl} with method: ${method}`)
-
-      const { sp, spMethods, spQueryable } = await getSharePointConfig(this, siteUrl)
-
       const fetchOptions: RequestInit = {
         headers: headers as Record<string, string>,
         body:
@@ -131,25 +127,9 @@ export class HttpRequestNode implements INodeType {
         async () => {
           // SPQueryable([sp.web, siteUrl], "/_api/web")
           const methodLower = method.toLowerCase() as "get" | "post" | "delete" | "patch"
-          const response = await spMethods[methodLower](spQueryable([sp.web, fullUrl]), fetchOptions)
-          // PnPjs returns the parsed JSON for get/post/patch/delete, but invokable may return raw response
-          let data = response
-          let status = 200
-          let statusText = "OK"
-          let headersObj = {}
-          if (response && response.headers && typeof response.headers.entries === "function") {
-            // Raw Response object (from invokable)
-            data = await response.json().catch(() => ({}))
-            status = response.status
-            statusText = response.statusText
-            headersObj = Object.fromEntries(response.headers.entries())
-          }
-          return {
-            status,
-            statusText,
-            headers: headersObj,
-            data,
-          }
+          const queryable = spQueryable([sp.web, fullUrl])
+          console.log(`[SharePoint HTTP Node][${methodLower}] ${queryable.toRequestUrl()}`, fetchOptions)
+          return spMethods[methodLower](queryable, fetchOptions)
         },
         itemIndex,
       )

@@ -1,4 +1,4 @@
-import { type ISPQueryable, type SPFI } from "@pnp/sp/presets/all.js"
+import type { ISPInvokableFactory, ISPQueryable, SPFI } from "@pnp/sp/presets/all.js"
 import type { GraphFI } from "@pnp/graph/presets/all.js"
 
 const getESMPnP = () => {
@@ -95,7 +95,7 @@ export const getPnp = async (config: IPnpConfig) => {
       delete: <T = any>(o: ISPQueryable<any>, init?: RequestInit) => Promise<T>
       patch: <T = any>(o: ISPQueryable<any>, init?: RequestInit) => Promise<T>
     },
-    spQueryable: spQueryable,
+    spQueryable: spQueryable as ISPInvokableFactory<ISPQueryable<any>>,
 
     /** Returns a global Graph queryable object by authenticating using client ID / client Secret */
     graph: graphfi().using(adaptiveAuth(config, "graph")) as GraphFI,
