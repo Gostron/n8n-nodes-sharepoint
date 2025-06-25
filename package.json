@@ -22,7 +22,7 @@
   "scripts": {
     "build": "npx rimraf dist && tsc && gulp build:icons",
     "dev": "tsc --watch",
-    "t": "tsc && node dist/nodes/test.js",
+    "t": "tsc -p tsconfig.test.json && node dist/test/test.js",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",
@@ -37,7 +37,8 @@
       "dist/credentials/MicrosoftSharePointAppOnlyApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/HttpRequestNode/HttpRequestNode.node.js"
+      "dist/nodes/HttpRequestNode/HttpRequestNode.node.js",
+      "dist/nodes/GetListItemNode/GetListItemNode.node.js"
     ]
   },
   "devDependencies": {
@@ -53,6 +54,7 @@
     "n8n-workflow": "*"
   },
   "dependencies": {
+    "@azure/msal-node": "^3.6.1",
     "@pnp/graph": "^4.13.0",
     "@pnp/nodejs": "^4.13.0",
     "@pnp/queryable": "^4.13.0",

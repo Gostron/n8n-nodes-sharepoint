@@ -1,6 +1,6 @@
 import type { IDataObject, IExecuteFunctions, INodeExecutionData, INodeType, INodeTypeDescription } from "n8n-workflow"
 import { NodeConnectionType } from "n8n-workflow"
-import { getSharePointConfig, executeWithErrorHandling } from "../../libraries/sharepointUtils"
+import { executeWithErrorHandling, getSharePointConfig } from "../../libraries/sharepointUtils"
 
 export class HttpRequestNode implements INodeType {
   description: INodeTypeDescription = {
@@ -88,6 +88,7 @@ export class HttpRequestNode implements INodeType {
       const tryParse = (parameterName: string): IDataObject | undefined => {
         try {
           const value = this.getNodeParameter(parameterName, itemIndex, "{}") as string
+          if (!value) return undefined
           return JSON.parse(value)
         } catch (error) {
           this.logger?.error(`Failed to parse JSON for ${parameterName}`, { error })
@@ -109,7 +110,7 @@ export class HttpRequestNode implements INodeType {
             .join("&")
         : ""
 
-      const { spOdata: sp, spMethods, spQueryable } = await getSharePointConfig(this, siteUrl)
+      const { sp, spMethods, spQueryable } = await getSharePointConfig(this, siteUrl)
 
       const fullUrl = `${siteUrl}${relativeUrl}${queryString}`
       const fetchOptions: RequestInit = {
@@ -134,9 +135,7 @@ export class HttpRequestNode implements INodeType {
         itemIndex,
       )
 
-      returnData.push({
-        json: result.error ? result : result,
-      })
+      returnData.push({ json: result })
     }
 
     return [returnData]

@@ -15,6 +15,33 @@ export async function getSharePointConfig(
   }
 > {
   const credentials = await context.getCredentials("microsoftSharePointAppOnlyApi")
+
+  if (!credentials.clientCertificatePrivateKey) {
+    throw new NodeOperationError(context.getNode(), "Client certificate private key is required", {
+      description: "Please provide the client certificate private key in the credentials.",
+    })
+  }
+  if (!credentials.clientCertificateThumbprint) {
+    throw new NodeOperationError(context.getNode(), "Client certificate thumbprint is required", {
+      description: "Please provide the client certificate thumbprint in the credentials.",
+    })
+  }
+  if (!credentials.clientId) {
+    throw new NodeOperationError(context.getNode(), "Client ID is required", {
+      description: "Please provide the client ID in the credentials.",
+    })
+  }
+  if (!credentials.tenantName) {
+    throw new NodeOperationError(context.getNode(), "Tenant name is required", {
+      description: "Please provide the tenant name in the credentials.",
+    })
+  }
+  if (!credentials.tenantId) {
+    throw new NodeOperationError(context.getNode(), "Tenant ID is required", {
+      description: "Please provide the tenant ID in the credentials.",
+    })
+  }
+
   const config: IPnpConfig = {
     clientCertificatePrivateKey: (() => {
       let value = (credentials.clientCertificatePrivateKey as string).replace(/\s+/g, "")
@@ -25,11 +52,10 @@ export async function getSharePointConfig(
     })(),
     clientCertificateThumbprint: credentials.clientCertificateThumbprint as string,
     clientId: credentials.clientId as string,
-    tenantId: credentials.tenantId as string,
-    siteUrl: siteUrl,
+    tenantName: credentials.tenantName as string,
   }
-  console.log(config)
-  return { config, ...(await getPnp(config)) }
+  // context.logger.info(JSON.stringify(config, null, 2))
+  return { config, ...(await getPnp.call(context, config, siteUrl)) }
 }
 
 export async function executeWithErrorHandling(this: IExecuteFunctions, fn: () => Promise<any>, itemIndex: number) {
