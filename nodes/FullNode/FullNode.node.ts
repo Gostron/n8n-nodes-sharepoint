@@ -2,16 +2,17 @@ import type { IExecuteFunctions, INodeExecutionData, INodeType, INodeTypeDescrip
 import { NodeConnectionType } from "n8n-workflow"
 import { executeWithErrorHandling, getSharePointConfig } from "../../libraries/sharepointUtils"
 import { isGuid } from "../../libraries/guid"
+import { properties } from "./properties"
 
-export class GetListItemNode implements INodeType {
+export class FullNode implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "SharePoint Get List Item",
-    name: "getListItemNode",
+    displayName: "SharePoint All PnP API",
+    name: "fullNode",
     group: ["transform"],
     version: 1,
-    description: "Get a list item from SharePoint using the PnPjs 'sp' object",
+    description: "Access all PnP API methods for SharePoint using the PnPjs 'sp' object",
     defaults: {
-      name: "SharePoint Get List Item",
+      name: "SharePoint All PnP API",
     },
     inputs: [NodeConnectionType.Main],
     outputs: [NodeConnectionType.Main],
@@ -21,35 +22,7 @@ export class GetListItemNode implements INodeType {
         required: true,
       },
     ],
-    properties: [
-      {
-        displayName: "Site URL",
-        name: "siteUrl",
-        type: "string",
-        default: "",
-        placeholder: "https://contoso.sharepoint.com/sites/example",
-        description: "The base URL of the SharePoint site",
-        required: true,
-      },
-      {
-        displayName: "List Name or ID",
-        name: "listNameOrId",
-        type: "string",
-        default: "",
-        placeholder: "e.g., My List or 12345678-1234-1234-1234-123456789012",
-        description: "The name or ID of the SharePoint list to query",
-        required: true,
-      },
-      {
-        displayName: "Item ID",
-        name: "itemId",
-        type: "string",
-        default: "",
-        placeholder: "e.g., 1",
-        description: "The ID of the SharePoint list item to retrieve",
-        required: true,
-      },
-    ],
+    properties,
   }
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {

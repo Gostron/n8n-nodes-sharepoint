@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-sharepoint-app-only",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Nodes for n8n to interact with Microsoft SharePoint using App-Only authentication",
   "keywords": [
     "n8n-community-node-package"
@@ -42,6 +42,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.19",
     "@types/node": "^22.15.29",
     "@typescript-eslint/parser": "~8.32.0",
     "eslint": "^8.57.0",
@@ -59,6 +60,7 @@
     "@pnp/nodejs": "^4.13.0",
     "@pnp/queryable": "^4.13.0",
     "@pnp/sp": "^4.13.0",
+    "lodash": "^4.17.21",
     "node-fetch": "^3.3.2",
     "whatwg-url": "^14.2.0"
   }

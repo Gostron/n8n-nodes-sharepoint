@@ -18,6 +18,12 @@ const getESMPnP = () => {
       graphfi: graph.graphfi as (root?: GraphInit | GraphFI) => GraphFI,
       BearerToken: queryable.BearerToken as (token: string) => TimelinePipe<Queryable>,
       SPDefault: nodejs.SPDefault as (props: ISPDefaultProps) => TimelinePipe<Queryable>,
+      SPDefaultHeaders: sp.DefaultHeaders as () => TimelinePipe,
+      SPDefaultInit: sp.DefaultInit as () => TimelinePipe,
+      GraphDefaultHeaders: graph.DefaultHeaders as () => TimelinePipe,
+      GraphDefaultInit: graph.DefaultInit as () => TimelinePipe,
+      NodeFetchWithRetry: nodejs.NodeFetchWithRetry as () => TimelinePipe,
+      DefaultParse: queryable.DefaultParse as () => TimelinePipe,
       GraphDefault: nodejs.GraphDefault as (props: IGraphDefaultProps) => TimelinePipe<Queryable>,
       InjectHeaders: queryable.InjectHeaders as (headers: Record<string, string>, prepend?: boolean) => TimelinePipe,
       spQueryable: sp.SPQueryable as ISPInvokableFactory<ISPQueryable<any>>,
@@ -55,7 +61,19 @@ const getTenantId = async (
 }
 
 export async function getPnp(this: IExecuteFunctions, pnpConfig: IPnpConfig, siteUrl: string) {
-  const { spfi, graphfi, InjectHeaders, spMethods, spQueryable } = await getESMPnP()
+  const {
+    spfi,
+    graphfi,
+    InjectHeaders,
+    spMethods,
+    spQueryable,
+    SPDefaultHeaders,
+    SPDefaultInit,
+    GraphDefaultHeaders,
+    GraphDefaultInit,
+    NodeFetchWithRetry,
+    DefaultParse,
+  } = await getESMPnP()
   const NoOdata = (instance: any) => InjectHeaders({ Accept: "application/json;odata=nometadata" })(instance)
   const tenantId = pnpConfig.tenantId || (await getTenantId(pnpConfig.tenantName, this?.helpers.httpRequest))
 
@@ -71,40 +89,60 @@ export async function getPnp(this: IExecuteFunctions, pnpConfig: IPnpConfig, sit
     },
   }
 
-  //#region Get tokens
-  const CACHE = (this?.getWorkflowStaticData("global") as Record<string, any>) || {}
+  const CACHE: Record<
+    string,
+    Record<"sp" | "graph", { token?: string; expiresOn?: number }>
+  > = (this?.getWorkflowStaticData("global") as Record<string, any>) || {}
   const CACHE_KEY = `n8n-custom-node-sharepoint-app-only-bearer-token-${siteUrl}`
-  let { sp, graph } =
-    (CACHE[CACHE_KEY] as Record<"sp" | "graph", { token: string; expiresOn: number }> | undefined) || {}
 
-  await Promise.all([
-    !sp || !sp.token || sp.expiresOn <= Date.now() ?
-      new ConfidentialClientApplication(config)
-        .acquireTokenByClientCredential({
-          scopes: [`https://${pnpConfig.tenantName.replace(".onmicrosoft.com", "")}.sharepoint.com/.default`],
-        })
-        .then((result) => (sp = { token: result!.accessToken, expiresOn: result!.expiresOn!.getTime() }))
-    : Promise.resolve(),
-    !graph || !graph.token || graph.expiresOn <= Date.now() ?
-      new ConfidentialClientApplication(config)
-        .acquireTokenByClientCredential({
-          scopes: ["https://graph.microsoft.com/.default"],
-        })
-        .then((result) => (graph = { token: result!.accessToken, expiresOn: result!.expiresOn!.getTime() }))
-    : Promise.resolve(),
+  // console.log(Object.entries(CACHE))
+
+  if (!CACHE[CACHE_KEY]) CACHE[CACHE_KEY] = { sp: {}, graph: {} }
+
+  const BearerTokenFactory = (mode: "sp" | "graph", scopes: string[]) => {
+    return (instance: Queryable<any>) => {
+      instance.on.auth(async (url: URL, init: RequestInit) => {
+        const model = CACHE[CACHE_KEY][mode]
+        if (!model || !model.token || !model.expiresOn || model.expiresOn <= Date.now()) {
+          console.log(`Acquiring new token for ${url.hostname}...`)
+          const client = new ConfidentialClientApplication(config)
+          const result = await client.acquireTokenByClientCredential({ scopes })
+          if (!result) {
+            throw new Error("Failed to acquire token")
+          }
+          model.token = result.accessToken
+          model.expiresOn = result.expiresOn!.getTime()
+
+          CACHE[CACHE_KEY][mode] = {
+            token: model.token,
+            expiresOn: model.expiresOn,
+          }
+        }
+
+        init.headers = {
+          ...init.headers,
+          Authorization: `Bearer ${model.token}`,
+        }
+
+        return [url, init]
+      })
+
+      return instance
+    }
+  }
+
+  const SPBearerToken = BearerTokenFactory("sp", [
+    `https://${pnpConfig.tenantName.replace(".onmicrosoft.com", "")}.sharepoint.com/.default`,
   ])
-  CACHE[CACHE_KEY] = { sp, graph }
-  //#region
+  const GraphBearerToken = BearerTokenFactory("graph", ["https://graph.microsoft.com/.default"])
 
-  // console.log({ sp, graph, CACHE_KEY, CACHE })
-
-  const SPToken = InjectHeaders({ Authorization: `Bearer ${sp?.token!}` })
-  const GraphToken = InjectHeaders({ Authorization: `Bearer ${graph?.token!}` })
+  const spcommonPipes = [SPDefaultHeaders(), SPDefaultInit(), NodeFetchWithRetry(), DefaultParse()]
+  const graphcommonPipes = [NodeFetchWithRetry(), DefaultParse(), GraphDefaultHeaders(), GraphDefaultInit()]
 
   return {
     /** Returns a global SharePoint queryable object by authenticating using client ID / client Secret */
-    sp: spfi(siteUrl).using(SPToken, NoOdata),
-    spOdata: spfi(siteUrl).using(SPToken),
+    sp: spfi(siteUrl).using(SPBearerToken, ...spcommonPipes, NoOdata) as SPFI,
+    spOdata: spfi(siteUrl).using(SPBearerToken, ...spcommonPipes) as SPFI,
     spMethods: spMethods as {
       get: <T = any>(o: ISPQueryable<any>, init?: RequestInit) => Promise<T>
       post: <T = any>(o: ISPQueryable<any>, init?: RequestInit) => Promise<T>
@@ -114,6 +152,6 @@ export async function getPnp(this: IExecuteFunctions, pnpConfig: IPnpConfig, sit
     spQueryable: spQueryable as ISPInvokableFactory<ISPQueryable<any>>,
 
     /** Returns a global Graph queryable object by authenticating using client ID / client Secret */
-    graph: graphfi().using(GraphToken),
+    graph: graphfi().using(GraphBearerToken, ...graphcommonPipes) as GraphFI,
   }
 }
