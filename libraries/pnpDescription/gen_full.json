@@ -1,0 +1,503 @@
+[
+  {
+    "label": "Web",
+    "key": "web",
+    "description": "Access to the current web instance",
+    "callable": true,
+    "parameters": [
+      {
+        "label": "Select",
+        "key": "select",
+        "description": "Choose which fields to return",
+        "type": "string",
+        "spread": true,
+        "chain": true
+      },
+      {
+        "label": "Expand",
+        "key": "expand",
+        "description": "Choose which fields to expand",
+        "type": "string",
+        "spread": true,
+        "chain": true
+      }
+    ],
+    "children": [
+      {
+        "label": "Lists",
+        "key": "lists",
+        "description": "Gets the collection of all lists that are contained in the Web site",
+        "callable": true,
+        "parameters": [
+          {
+            "label": "Select",
+            "key": "select",
+            "description": "Choose which fields to return",
+            "type": "string",
+            "spread": true,
+            "chain": true
+          },
+          {
+            "label": "Expand",
+            "key": "expand",
+            "description": "Choose which fields to expand",
+            "type": "string",
+            "spread": true,
+            "chain": true
+          },
+          {
+            "label": "Filter",
+            "key": "filter",
+            "description": "Filters the returned collection (https://msdn.microsoft.com/en-us/library/office/fp142385.aspx#bk_supported)",
+            "type": "string",
+            "chain": true
+          },
+          {
+            "label": "OrderBy",
+            "key": "orderBy",
+            "description": "Order based on the supplied fields add ` asc` or ` desc` to the field name",
+            "type": "string",
+            "chain": true
+          },
+          {
+            "label": "Skip",
+            "key": "skip",
+            "description": "Skip the specified number of items",
+            "type": "number",
+            "chain": true
+          },
+          {
+            "label": "Top",
+            "key": "top",
+            "description": "Limits the query to only return the specified number of items",
+            "type": "number",
+            "chain": true
+          }
+        ],
+        "children": [
+          {
+            "label": "Get by ID",
+            "key": "getById",
+            "description": "Gets a list from the collection by guid id",
+            "callable": true,
+            "parameters": [
+              {
+                "label": "Select",
+                "key": "select",
+                "description": "Choose which fields to return",
+                "type": "string",
+                "spread": true,
+                "chain": true
+              },
+              {
+                "label": "Expand",
+                "key": "expand",
+                "description": "Choose which fields to expand",
+                "type": "string",
+                "spread": true,
+                "chain": true
+              },
+              {
+                "label": "ID",
+                "key": "id",
+                "description": "The Id of the list (GUID)",
+                "type": "string"
+              }
+            ],
+            "children": [
+              {
+                "label": "Get Items by CAML Query",
+                "key": "getItemsByCAMLQuery",
+                "description": "Returns the collection of items in the list based on the provided CAML query",
+                "parameters": [
+                  {
+                    "label": "CAML Query",
+                    "key": "query",
+                    "description": "A query that is performed against the list",
+                    "type": "object",
+                    "required": true
+                  },
+                  {
+                    "label": "Expands",
+                    "key": "expands",
+                    "description": "An expanded array of items that contains fields to expand in the CAML query",
+                    "type": "string",
+                    "spread": true
+                  }
+                ]
+              },
+              {
+                "label": "Update",
+                "key": "update",
+                "description": "Updates this list instance with the supplied properties",
+                "parameters": [
+                  {
+                    "label": "Properties",
+                    "key": "properties",
+                    "description": "A plain object hash of values to update for the list",
+                    "type": "object",
+                    "required": true
+                  },
+                  {
+                    "label": "ETag",
+                    "key": "eTag",
+                    "description": "Value used in the IF-Match header, by default '*'",
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "label": "Items",
+                "key": "items",
+                "description": "Gets the collection of all items that are contained in the list",
+                "callable": true,
+                "parameters": [
+                  {
+                    "label": "Select",
+                    "key": "select",
+                    "description": "Choose which fields to return",
+                    "type": "string",
+                    "spread": true,
+                    "chain": true
+                  },
+                  {
+                    "label": "Expand",
+                    "key": "expand",
+                    "description": "Choose which fields to expand",
+                    "type": "string",
+                    "spread": true,
+                    "chain": true
+                  },
+                  {
+                    "label": "Filter",
+                    "key": "filter",
+                    "description": "Filters the returned collection (https://msdn.microsoft.com/en-us/library/office/fp142385.aspx#bk_supported)",
+                    "type": "string",
+                    "chain": true
+                  },
+                  {
+                    "label": "OrderBy",
+                    "key": "orderBy",
+                    "description": "Order based on the supplied fields add ` asc` or ` desc` to the field name",
+                    "type": "string",
+                    "chain": true
+                  },
+                  {
+                    "label": "Skip",
+                    "key": "skip",
+                    "description": "Skip the specified number of items",
+                    "type": "number",
+                    "chain": true
+                  },
+                  {
+                    "label": "Top",
+                    "key": "top",
+                    "description": "Limits the query to only return the specified number of items",
+                    "type": "number",
+                    "chain": true
+                  }
+                ],
+                "children": [
+                  {
+                    "label": "Get by ID",
+                    "key": "getById",
+                    "description": "Gets an item from the collection by id",
+                    "callable": true,
+                    "parameters": [
+                      {
+                        "label": "Select",
+                        "key": "select",
+                        "description": "Choose which fields to return",
+                        "type": "string",
+                        "spread": true,
+                        "chain": true
+                      },
+                      {
+                        "label": "Expand",
+                        "key": "expand",
+                        "description": "Choose which fields to expand",
+                        "type": "string",
+                        "spread": true,
+                        "chain": true
+                      },
+                      {
+                        "label": "ID",
+                        "key": "id",
+                        "description": "The Id of the item (number)",
+                        "type": "number"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "label": "Add",
+                    "key": "add",
+                    "description": "Adds a new item to the collection",
+                    "parameters": [
+                      {
+                        "label": "Properties",
+                        "key": "properties",
+                        "description": "The new item's properties",
+                        "type": "object",
+                        "required": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "label": "Get by Title",
+            "key": "getByTitle",
+            "description": "Gets a list from the collection by title",
+            "callable": true,
+            "parameters": [
+              {
+                "label": "Select",
+                "key": "select",
+                "description": "Choose which fields to return",
+                "type": "string",
+                "spread": true,
+                "chain": true
+              },
+              {
+                "label": "Expand",
+                "key": "expand",
+                "description": "Choose which fields to expand",
+                "type": "string",
+                "spread": true,
+                "chain": true
+              },
+              {
+                "label": "Title",
+                "key": "title",
+                "description": "The title of the list",
+                "type": "string"
+              }
+            ],
+            "children": [
+              {
+                "label": "Get Items by CAML Query",
+                "key": "getItemsByCAMLQuery",
+                "description": "Returns the collection of items in the list based on the provided CAML query",
+                "parameters": [
+                  {
+                    "label": "CAML Query",
+                    "key": "query",
+                    "description": "A query that is performed against the list",
+                    "type": "object",
+                    "required": true
+                  },
+                  {
+                    "label": "Expands",
+                    "key": "expands",
+                    "description": "An expanded array of items that contains fields to expand in the CAML query",
+                    "type": "string",
+                    "spread": true
+                  }
+                ]
+              },
+              {
+                "label": "Update",
+                "key": "update",
+                "description": "Updates this list instance with the supplied properties",
+                "parameters": [
+                  {
+                    "label": "Properties",
+                    "key": "properties",
+                    "description": "A plain object hash of values to update for the list",
+                    "type": "object",
+                    "required": true
+                  },
+                  {
+                    "label": "ETag",
+                    "key": "eTag",
+                    "description": "Value used in the IF-Match header, by default '*'",
+                    "type": "string"
+                  }
+                ]
+              },
+              {
+                "label": "Items",
+                "key": "items",
+                "description": "Gets the collection of all items that are contained in the list",
+                "callable": true,
+                "parameters": [
+                  {
+                    "label": "Select",
+                    "key": "select",
+                    "description": "Choose which fields to return",
+                    "type": "string",
+                    "spread": true,
+                    "chain": true
+                  },
+                  {
+                    "label": "Expand",
+                    "key": "expand",
+                    "description": "Choose which fields to expand",
+                    "type": "string",
+                    "spread": true,
+                    "chain": true
+                  },
+                  {
+                    "label": "Filter",
+                    "key": "filter",
+                    "description": "Filters the returned collection (https://msdn.microsoft.com/en-us/library/office/fp142385.aspx#bk_supported)",
+                    "type": "string",
+                    "chain": true
+                  },
+                  {
+                    "label": "OrderBy",
+                    "key": "orderBy",
+                    "description": "Order based on the supplied fields add ` asc` or ` desc` to the field name",
+                    "type": "string",
+                    "chain": true
+                  },
+                  {
+                    "label": "Skip",
+                    "key": "skip",
+                    "description": "Skip the specified number of items",
+                    "type": "number",
+                    "chain": true
+                  },
+                  {
+                    "label": "Top",
+                    "key": "top",
+                    "description": "Limits the query to only return the specified number of items",
+                    "type": "number",
+                    "chain": true
+                  }
+                ],
+                "children": [
+                  {
+                    "label": "Get by ID",
+                    "key": "getById",
+                    "description": "Gets an item from the collection by id",
+                    "callable": true,
+                    "parameters": [
+                      {
+                        "label": "Select",
+                        "key": "select",
+                        "description": "Choose which fields to return",
+                        "type": "string",
+                        "spread": true,
+                        "chain": true
+                      },
+                      {
+                        "label": "Expand",
+                        "key": "expand",
+                        "description": "Choose which fields to expand",
+                        "type": "string",
+                        "spread": true,
+                        "chain": true
+                      },
+                      {
+                        "label": "ID",
+                        "key": "id",
+                        "description": "The Id of the item (number)",
+                        "type": "number"
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "label": "Add",
+                    "key": "add",
+                    "description": "Adds a new item to the collection",
+                    "parameters": [
+                      {
+                        "label": "Properties",
+                        "key": "properties",
+                        "description": "The new item's properties",
+                        "type": "object",
+                        "required": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "label": "Add",
+            "key": "add",
+            "description": "Adds a new list to the collection",
+            "parameters": [
+              {
+                "label": "Title",
+                "key": "title",
+                "description": "The new list's title",
+                "type": "string",
+                "required": true
+              },
+              {
+                "label": "Description",
+                "key": "description",
+                "description": "The new list's description",
+                "type": "string"
+              },
+              {
+                "label": "Template",
+                "key": "template",
+                "description": "The list template value",
+                "type": "number"
+              },
+              {
+                "label": "Enable content types",
+                "key": "enableContentTypes",
+                "description": "If true content types will be allowed and enabled, otherwise they will be disallowed and not enabled",
+                "type": "boolean"
+              },
+              {
+                "label": "Additional settings",
+                "key": "additionalSettings",
+                "description": "Will be passed as part of the list creation body or used to update an existing list",
+                "type": "object"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "Site",
+    "key": "site",
+    "callable": true,
+    "parameters": [
+      {
+        "label": "Select",
+        "key": "select",
+        "description": "Choose which fields to return",
+        "type": "string",
+        "spread": true,
+        "chain": true
+      },
+      {
+        "label": "Expand",
+        "key": "expand",
+        "description": "Choose which fields to expand",
+        "type": "string",
+        "spread": true,
+        "chain": true
+      }
+    ],
+    "children": [
+      {
+        "label": "Get Document Libraries",
+        "key": "getDocumentLibraries",
+        "description": "Gets the document libraries on a site. Static method. (SharePoint Online only)",
+        "parameters": [
+          {
+            "label": "Absolute web URL",
+            "key": "absoluteWebUrl",
+            "description": "The absolute url of the web whose document libraries should be returned",
+            "type": "string",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+]

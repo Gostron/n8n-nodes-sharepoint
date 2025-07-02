@@ -22,7 +22,8 @@
   "scripts": {
     "build": "npx rimraf dist && tsc && gulp build:icons",
     "dev": "tsc --watch",
-    "t": "tsc -p tsconfig.test.json && node dist/test/test.js",
+    "t": "tsc && node dist/test/test.js",
+    "generate": "tsc && node dist/provisioning/main.js",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",

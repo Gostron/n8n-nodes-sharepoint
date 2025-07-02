@@ -21,5 +21,14 @@
     "skipLibCheck": true,
     "outDir": "./dist/"
   },
-  "include": ["credentials/**/*", "libraries/**/*", "nodes/**/*", "nodes/**/*.json", "package.json", "test/**/*"]
+  "include": [
+    "credentials/**/*",
+    "libraries/**/*",
+    "nodes/**/*",
+    "nodes/**/*.json",
+    "package.json",
+    "test/**/*",
+    "provisioning/**/*"
+  ],
+  "exclude": ["provisioning/_templateNode.ts", "provisioning/_templateProperties.ts"]
 }
